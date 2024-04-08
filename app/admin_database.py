@@ -1,5 +1,4 @@
 import re
-import os
 from fastapi import HTTPException , Depends
 from app.hashing import hash_password, verify_hash
 from app.models import Admin, SecretKey, AdminInfo
@@ -11,6 +10,16 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 from typing import Optional
 from typing import Generator
+import sys
+import os
+
+# Set the project root path
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+
+# Add the 'app' folder to sys.path
+app_folder = os.path.join(project_root, 'app')
+sys.path.insert(0, app_folder)
+
 
 
 # Get the database URL from the environment variable
