@@ -171,9 +171,7 @@ def authenticate_admin(username: str, password: Optional[str] = None, db: Sessio
     
     except Exception as e:
         # Handle exceptions here
-        pass  # Placeholder for exception handling logic
-
-    return None  # Return None if authentication fails
+        raise RuntimeError(f"Error authenticating admin: {e}")
 
 
 
@@ -207,7 +205,7 @@ def update_admin_password(username: str, new_hashed_password: str, db: Session) 
         
         admin.hashed_password = new_hashed_password
         db.commit()
-        print(f"Admin password updated successfully.")
+        print("Admin password updated successfully.")
         return True
     except SQLAlchemyError as e:
         db.rollback()

@@ -1,10 +1,8 @@
-from sqlalchemy import Column, Integer, String, DateTime, Boolean, Table, ForeignKey
-from sqlalchemy.orm import relationship
+from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
 from datetime import datetime
 from pydantic import BaseModel
-from sqlalchemy.sql import func
 
 Base = declarative_base()
 
