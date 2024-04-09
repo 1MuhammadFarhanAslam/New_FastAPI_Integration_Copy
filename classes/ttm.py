@@ -111,13 +111,16 @@ class MusicGenerationService(AIModelService):
         bt.logging.info(f"Scores after update in TTM: {self.scores}")
 
 
-    def process_response(self, axon, response, prompt):
+    def process_response(self, axon, response, prompt, api=False):
         try:
             music_output = response.music_output
             if response is not None and isinstance(response, lib.protocol.MusicGeneration) and response.music_output is not None and response.dendrite.status_code == 200:
                 bt.logging.success(f"Received music output from {axon.hotkey}")
-                file = self.handle_music_output(axon, music_output, prompt, response.model_name)
-                return file
+                if api:
+                    file = self.handle_music_output(axon, music_output, prompt, response.model_name)
+                    return file
+                else:
+                    self.handle_music_output(axon, music_output, prompt, response.model_name)
             elif response.dendrite.status_code != 403:
                 self.punish(axon, service="Text-To-Music", punish_message=response.dendrite.status_message)
             else:
@@ -195,7 +198,7 @@ class MusicGenerationService(AIModelService):
                 bt.logging.error(f"Error in penalizing the score: {e}")
             bt.logging.info(f"Aggregated Score from Smoothness, SNR and Consistancy Metric: {score}")
             self.update_score(axon, score, service="Text-To-Music", ax=self.filtered_axon)
-            # return output_path
+            return output_path
 
         except Exception as e:
             bt.logging.error(f"Error processing Music output: {e}")

@@ -9,7 +9,7 @@ from sqlalchemy.orm import sessionmaker
 from typing import Union, List
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
-from typing import Optional
+from typing import Union, Optional
 from typing import Generator
 
 
@@ -171,7 +171,9 @@ def authenticate_admin(username: str, password: Optional[str] = None, db: Sessio
     
     except Exception as e:
         # Handle exceptions here
-        raise RuntimeError(f"Error authenticating admin: {e}")
+        pass  # Placeholder for exception handling logic
+
+    return None  # Return None if authentication fails
 
 
 
@@ -205,7 +207,7 @@ def update_admin_password(username: str, new_hashed_password: str, db: Session) 
         
         admin.hashed_password = new_hashed_password
         db.commit()
-        print("Admin password updated successfully.")
+        print(f"Admin password updated successfully.")
         return True
     except SQLAlchemyError as e:
         db.rollback()
