@@ -141,6 +141,7 @@ class TextToSpeechService(AIModelService):
             if response is not None and isinstance(response, lib.protocol.TextToSpeech) and response.speech_output is not None and response.dendrite.status_code == 200:
                 bt.logging.success(f"Received Text to speech output from {axon.hotkey}")
                 file = self.handle_speech_output(axon, speech_output, prompt, response.model_name)
+                bt.logging.info(f"______________TTS-File______________: {file}")
                 return file
             elif response.dendrite.status_code != 403:
                 self.punish(axon, service="Text-To-Speech", punish_message=response.dendrite.status_message)
