@@ -129,6 +129,7 @@ async def tts_service(request: TTSMrequest, user: User = Depends(get_current_act
             bt.logging.info(f"request prompt: {request.prompt}")
             bt.logging.info(f"request axon here: {axon}")
             response = tts_api.query_network(axon, request.prompt)
+            bt.logging.info(f"_________________________response__________________________: {response}")
 
             # Process the response
             audio_data = tts_api.process_response(axon, response, request.prompt, api=True)
