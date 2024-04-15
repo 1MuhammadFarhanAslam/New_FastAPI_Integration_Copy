@@ -1,5 +1,5 @@
 service_flags = {
-    "TextToSpeechService": True,
-    "MusicGenerationService": False,
+    "TextToSpeechService": False,
+    "MusicGenerationService": True,
     "VoiceCloningService": False,
 }
