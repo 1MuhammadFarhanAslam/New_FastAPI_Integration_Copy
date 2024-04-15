@@ -30,10 +30,10 @@ if os.path.exists(os.path.join(project_root, 'app')):
 class AIModelController():
     def __init__(self):
         self.aimodel = AIModelService()
-        self.text_to_speech_service = TextToSpeechService()
+        # self.text_to_speech_service = TextToSpeechService()
         self.music_generation_service = MusicGenerationService()
-        self.voice_cloning_service = VoiceCloningService()
-        self.current_service = self.text_to_speech_service
+        # self.voice_cloning_service = VoiceCloningService()
+        self.current_service = self.music_generation_service
         self.service = service_flags
         self.last_run_start_time = dt.datetime.now()
 
