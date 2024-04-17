@@ -10,9 +10,7 @@ from ..models import User
 from ..user_auth import get_current_active_user
 import re
 from fastapi.encoders import jsonable_encoder
-from ..end_points.tts_api import TTS_API
 from ..end_points.ttm_api import TTM_API
-from ..end_points.vc_api import VC_API
 import bittensor as bt
 from fastapi.responses import FileResponse
 import os
@@ -23,9 +21,7 @@ from sqlalchemy.orm import Session
 
 
 router = APIRouter()
-tts_api = TTS_API()
 ttm_api = TTM_API()
-vc_api = VC_API()
 
 
 
