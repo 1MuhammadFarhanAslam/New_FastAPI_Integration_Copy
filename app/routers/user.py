@@ -27,8 +27,7 @@ ttm_api = TTM_API()
 
 # Define a Pydantic model for the request body
 class TTSMrequest(BaseModel):
-    prompt: str 
-    duration: int = 15
+    prompt: str # The prompt for the Text-to-Music service
 
 @router.post("/change_password", response_model=dict)
 async def change_user_password(
