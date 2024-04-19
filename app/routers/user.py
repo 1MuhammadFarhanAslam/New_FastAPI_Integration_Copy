@@ -103,8 +103,8 @@ async def ttm_service(request: TTSMrequest, user: User = Depends(get_current_act
         if user.subscription_end_time and datetime.utcnow() <= user.subscription_end_time and role.ttm_enabled == 1:
             print("Congratulations! You have access to Text-to-Music (TTM) service.")
 
-            bt.logging.info("__________request prompt____________:", request.prompt)
-            bt.logging.info("__________request duration____________:", request.duration)
+            bt.logging.info("__________request prompt____________: ", request.prompt)
+            bt.logging.info("__________request duration____________: ", request.duration)
 
             # Get filtered axons
             filtered_axons = ttm_api.get_filtered_axons()
