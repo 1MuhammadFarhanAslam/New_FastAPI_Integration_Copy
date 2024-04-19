@@ -102,9 +102,7 @@ async def ttm_service(request: TTSMrequest, user: User = Depends(get_current_act
         role = user.roles[0]
         if user.subscription_end_time and datetime.utcnow() <= user.subscription_end_time and role.ttm_enabled == 1:
             print("Congratulations! You have access to Text-to-Music (TTM) service.")
-
-            request_data = await request.json()
-            print("________________Request data_______________:", request_data)
+            
             print("________________Prompt_______________:", request.prompt)
             print("________________Duration_______________:", request.duration)
 
