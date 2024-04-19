@@ -90,7 +90,7 @@ class MusicGenerationService(AIModelService):
                 filtered_axons = self.get_filtered_axons_from_combinations()
                 bt.logging.info(f"______________TTM-Prompt______________: {g_prompt}")
                 responses = self.query_network(filtered_axons, g_prompt)
-                await self.process_responses(filtered_axons,responses, g_prompt)
+                self.process_responses(filtered_axons,responses, g_prompt)
 
                 if self.last_reset_weights_block + 50 < self.current_block:
                     bt.logging.info(f"Resetting weights for validators and nodes without IPs")
