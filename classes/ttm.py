@@ -98,7 +98,7 @@ class MusicGenerationService(AIModelService):
                     # set all nodes without ips set to 0
                     self.scores = self.scores * torch.Tensor([self.metagraph.neurons[uid].axon_info.ip != '0.0.0.0' for uid in self.metagraph.uids])
 
-    async def query_network(self,filtered_axons, prompt, duration=15):
+    def query_network(self,filtered_axons, prompt, duration=15):
         # Network querying logic
         if duration == 15:
             self.duration = 755
@@ -142,7 +142,7 @@ class MusicGenerationService(AIModelService):
         bt.logging.info(f"Scores after update in TTM: {self.scores}")
 
 
-    async def process_response(self, axon, response, prompt, api=False):
+    def process_response(self, axon, response, prompt, api=False):
         try:
             music_output = response.music_output
             if response is not None and isinstance(response, lib.protocol.MusicGeneration) and response.music_output is not None and response.dendrite.status_code == 200:
