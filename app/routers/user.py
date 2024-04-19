@@ -122,6 +122,7 @@ async def ttm_service(request: TTSMrequest, user: User = Depends(get_current_act
 
             # Process the response
             audio_data = ttm_api.process_response(axon, response, request.prompt, api=True)
+            bt.logging.info(f"Audio data: {audio_data}")
 
             try:
                 file_extension = os.path.splitext(audio_data)[1].lower()
