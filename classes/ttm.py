@@ -134,7 +134,7 @@ class MusicGenerationService(AIModelService):
             bt.logging.info(f"Next update will be at block: {self.last_updated_block + 120}")
             bt.logging.info(f"Skipping weight update. Last update was at block {self.last_updated_block}")
 
-    async def process_responses(self,filtered_axons, responses, prompt):
+    def process_responses(self,filtered_axons, responses, prompt):
         for axon, response in zip(filtered_axons, responses):
             if response is not None and isinstance(response, lib.protocol.MusicGeneration):
                 self.process_response(axon, response, prompt)
