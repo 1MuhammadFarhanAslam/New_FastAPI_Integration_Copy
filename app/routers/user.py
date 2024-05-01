@@ -127,11 +127,6 @@ async def ttm_service(request: TTSMrequest, user: User = Depends(get_current_act
             try:
                 file_extension = os.path.splitext(audio_data)[1].lower()
                 bt.logging.info(f"audio_file_path: {audio_data}")
-                bt.logging.info(f"file_extension: {file_extension}")
-                # Debugging: Print content length and actual content size
-                content_length = os.path.getsize(audio_data)
-                bt.logging.info(f"Content-Length header: {response.headers.get('Content-Length')}")
-                bt.logging.info(f"Actual content length: {content_length}")
             except Exception as e:
                 print(e)
                 bt.logging.error(f"Error processing audio file path or server unaviable for uid: {uid}")
@@ -146,7 +141,6 @@ async def ttm_service(request: TTSMrequest, user: User = Depends(get_current_act
             content_type = "audio/wav" if file_extension == '.wav' else "audio/mpeg"
 
             # Return the audio file
-            bt.logging.success("TTM service completed successfully")
             return FileResponse(path=audio_data, media_type=content_type, filename=os.path.basename(audio_data), headers={"TTM-Axon-UID": str(uid)})
 
         else:
