@@ -113,7 +113,7 @@ class MusicGenerationService(AIModelService):
             self.duration = duration
             time_out = 400
 
-        responses = self.dendrite.query(
+        responses = self.dendrite.forward(
             filtered_axons,
             lib.protocol.MusicGeneration(text_input=prompt, duration=self.duration ),
             deserialize=True,
