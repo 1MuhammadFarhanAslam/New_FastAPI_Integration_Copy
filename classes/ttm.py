@@ -42,7 +42,6 @@ class MusicGenerationService(AIModelService):
         self.duration = None  
         self.lock = asyncio.Lock()
         self.best_uid = self.priority_uids(self.metagraph)
-        self.time_out = 15
         
 
     def load_prompts(self):
@@ -70,7 +69,7 @@ class MusicGenerationService(AIModelService):
         except Exception as e:
             c_prompt = None
 
-        if step:
+        if step % 50 == 0:
             async with self.lock:
                 # Use the API prompt if available; otherwise, load prompts from HuggingFace
                 if c_prompt:
@@ -102,23 +101,23 @@ class MusicGenerationService(AIModelService):
     def query_network(self,filtered_axons, prompt, duration=15):
         # Network querying logic
         if duration == 15:
-            self.duration = 755
-            self.time_out = 300
+            self.duration = duration
+            time_out = 100
         elif duration == 30:
-            self.duration = 1510
-            self.time_out = 600
+            self.duration = duration
+            time_out = 200
         elif duration == 45:
-            self.duration = 2265
-            self.time_out = 800
+            self.duration = duration
+            time_out = 300
         elif duration == 60:
-            self.duration = 3020
-            self.time_out = 1000
+            self.duration = duration
+            time_out = 400
 
         responses = self.dendrite.query(
             filtered_axons,
             lib.protocol.MusicGeneration(text_input=prompt, duration=self.duration ),
             deserialize=True,
-            timeout=self.time_out,
+            timeout=time_out,
         )
         return responses
     
