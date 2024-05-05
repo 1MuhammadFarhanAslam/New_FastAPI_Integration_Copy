@@ -5,6 +5,8 @@ import torchaudio
 import traceback
 import argparse
 import typing
+import torch
+import wave
 import time
 import sys
 import os
@@ -173,8 +175,7 @@ def main(config):
 
     def ProcessMusic(synapse: lib.protocol.MusicGeneration) -> lib.protocol.MusicGeneration:
         bt.logging.info(f"Generating music with the model: {config.music_model}")
-        music = ttm_models.generate_music(synapse.text_input, duration=synapse.duration)
-        bt.logging.info(f"Music generated with the model AND THE MUSIC IS : {music}")
+        music = ttm_models.generate_music(synapse.text_input, synapse.duration)
 
         # Check if 'music' contains valid audio data
         if music is None:
@@ -184,8 +185,7 @@ def main(config):
             try:
                 sampling_rate = 32000
                 # Assuming write_wav function exists and works as intended
-                music_numpy = music.cpu().numpy()
-                write_wav("musicgen_out.wav", rate=sampling_rate, data=music_numpy) # synapse.dendrite.hotkey + "_musicgen_out.wav"
+                write_wav("musicgen_out.wav", rate=sampling_rate, data=music) # synapse.dendrite.hotkey + "_musicgen_out.wav"
                 bt.logging.success(f"Text to Music has been generated! and saved to: musicgen_out.wav")
                 # Assuming convert_music_to_tensor function exists to convert WAV to tensor
                 music_tensor = convert_music_to_tensor("musicgen_out.wav")
