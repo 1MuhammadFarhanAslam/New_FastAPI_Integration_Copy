@@ -24,6 +24,21 @@ class MetricEvaluator:
         return snr
 
     @staticmethod
+    def calculate_hnr(file_path):
+        """
+        Harmonic to noise ratio is a measure of the relations between tone and noise.
+        A high value means less noise, a low value means more noise.
+        """
+        y, _ = librosa.load(file_path, sr=None)
+        if np.max(np.abs(y)) < 1e-4 or np.var(y) < 1e-2:
+            return 0
+        harmonic, percussive = librosa.effects.hpss(y)
+        harmonic_power = np.mean(harmonic**2)
+        noise_power = np.mean(percussive**2)
+        hnr = 10 * np.log10(harmonic_power / max(noise_power, 1e-10))
+        return hnr
+
+    @staticmethod
     def calculate_consistency(file_path, text):
         try:
             device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -46,9 +61,36 @@ class MetricEvaluator:
             print(f"An error occurred while calculating music consistency score: {e}")
             return None
 
+class Normalizer:
+    @staticmethod
+    def normalize_quality(quality_metric):
+        # Normalize quality to be within 0 to 1, with good values above 20 dB considered as high quality
+        return 1 / (1 + np.exp(-((quality_metric - 20) / 10)))
+
+    @staticmethod
+    def normalize_consistency(score):
+        if score is not None:
+            if score > 0:
+                normalized_consistency = (score + 1) / 2  # Normalizes from [0, 1] to [0.5, 1]
+            else:
+                normalized_consistency = 0  # Ensures that a consistency_score of 0 or any negative value yields a normalized score of 0
+        else:
+            normalized_consistency = 0  # Handles cases where consistency_score is None
+        return normalized_consistency
+
+class Aggregator:
+    @staticmethod
+    def geometric_mean(scores):
+        """Calculate the geometric mean of the scores, avoiding any non-positive values."""
+        scores = [max(score, 0.0001) for score in scores.values()]  # Replace non-positive values to avoid math errors
+        product = np.prod(scores)
+        return product ** (1.0 / len(scores))
+
 class MusicQualityEvaluator:
     def __init__(self):
-        pass
+        self.metric_evaluator = MetricEvaluator()
+        self.normalizer = Normalizer()
+        self.aggregator = Aggregator()
 
     def evaluate_music_quality(self, file_path, text=None):
         try:
@@ -58,25 +100,26 @@ class MusicQualityEvaluator:
             bt.logging.error(f"Failed to calculate SNR")
 
         try:
+            hnr_score = MetricEvaluator.calculate_hnr(file_path)
+            bt.logging.info(f'.......HNR......: {hnr_score} dB')
+        except:
+            bt.logging.error(f"Failed to calculate HNR")
+
+        try:
             consistency_score = MetricEvaluator.calculate_consistency(file_path, text)
             bt.logging.info(f'....... Consistency Score ......: {consistency_score}')
         except:
             bt.logging.error(f"Failed to calculate Consistency score")
 
         # Normalize scores and calculate aggregate score
-        normalized_snr = 1 / (1 + np.exp(-snr_score / 20))
-        normalized_consistency = (consistency_score + 1) / 2 if consistency_score is not None and consistency_score >= 0 else 0
+        normalized_snr = self.normalizer.normalize_quality(snr_score)
+        normalized_hnr = self.normalizer.normalize_quality(hnr_score)
+        normalized_consistency = self.normalizer.normalize_consistency(consistency_score)
 
-        if consistency_score is not None:
-            if consistency_score > 0:
-                normalized_consistency = (consistency_score + 1) / 2  # Normalizes from [0, 1] to [0.5, 1]
-            else:
-                normalized_consistency = 0  # Ensures that a consistency_score of 0 or any negative value yields a normalized score of 0
-        else:
-            normalized_consistency = 0  # Handles cases where consistency_score is None
+        # bt.logging.info(f'Normalized Metrics: SNR = {normalized_snr}dB, Normalized Metrics: HNR = {normalized_hnr}dB, Consistency = {normalized_consistency}')
+        aggregate_quality = self.aggregator.geometric_mean({'snr': normalized_snr, 'hnr': normalized_hnr})
+        aggregate_score = self.aggregator.geometric_mean({'quality': aggregate_quality, 'normalized_consistency': normalized_consistency}) if consistency_score > 0.2 else 0
 
-        bt.logging.info(f'Normalized Metrics: SNR = {normalized_snr}dB, Consistency = {normalized_consistency}')
-        aggregate_score = 0.6 * normalized_snr + 0.4 * normalized_consistency 
-        aggregate_score = aggregate_score if consistency_score >= 0.2 else 0
+        bt.logging.info(f'Normalized Metrics: SNR = {normalized_snr}dB, Normalized Metrics: HNR = {normalized_hnr}, Consistency = {normalized_consistency}')
         bt.logging.info(f'....... Aggregate Score ......: {aggregate_score}')
         return aggregate_score
