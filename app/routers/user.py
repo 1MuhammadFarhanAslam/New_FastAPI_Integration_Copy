@@ -156,7 +156,7 @@ async def ttm_service(request: TTSMrequest, user: User = Depends(get_current_act
     user_dict = jsonable_encoder(user)
     print("User details:", user_dict)
 
-    # Check if the user has a subscription and access to TTM service
+    #check if the user has subscription or not
     if user.roles:
         role = user.roles[0]
         if user.subscription_end_time and datetime.utcnow() <= user.subscription_end_time and role.ttm_enabled == 1:
@@ -190,7 +190,6 @@ async def ttm_service(request: TTSMrequest, user: User = Depends(get_current_act
                 print(e)
                 bt.logging.error(f"Error processing audio file path or server unaviable for uid: {uid}")
                 raise HTTPException(status_code=404, detail= f"Error processing audio file path or server unavailable for uid: {uid}")
-
             # Process each audio file path as needed
 
             if file_extension not in ['.wav', '.mp3']:
@@ -200,20 +199,12 @@ async def ttm_service(request: TTSMrequest, user: User = Depends(get_current_act
             # Set the appropriate content type based on the file extension
             content_type = "audio/wav" if file_extension == '.wav' else "audio/mpeg"
 
-            # Define a function to stream audio data
-            async def audio_stream():
-                with open(audio_data, "rb") as audio_file:
-                    chunk = audio_file.read(1024)
-                    while chunk:
-                        yield chunk
-                        chunk = audio_file.read(1024)
-
-            # Return a StreamingResponse with the audio data
-            return StreamingResponse(audio_stream(), media_type=content_type, headers={"TTM-Axon-UID": str(uid)})
+            # Return the audio file
+            return StreamingResponse(path=audio_data, media_type=content_type, filename=os.path.basename(audio_data), headers={"TTM-Axon-UID": str(uid)})
 
         else:
-            print(f"{user.username}! You do not have access to Text-to-Music (TTM) service or your subscription is expired.")
-            raise HTTPException(status_code=401, detail=f"{user.username}! Your subscription has expired or you do not have access to Text-to-Music (TTM) service")
+            print(f"{user.username}! You do not have any access to Text-to-Music (TTM) service or subscription is expired.")
+            raise HTTPException(status_code=401, detail=f"{user.username}! Your subscription have been expired or you does not have any access to Text-to-Music (TTM) service")
     else:
         print(f"{user.username}! You do not have any roles assigned.")
-        raise HTTPException(status_code=401, detail=f"{user.username}! You do not have any roles assigned")
+        raise HTTPException(status_code=401, detail=f"{user.username}! Your does not have any roles assigned")
