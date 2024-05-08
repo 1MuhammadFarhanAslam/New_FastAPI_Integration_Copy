@@ -12,7 +12,7 @@ import re
 from fastapi.encoders import jsonable_encoder
 from ..end_points.ttm_api import TTM_API
 import bittensor as bt
-from fastapi.responses import FileResponse, StreamingResponse
+from fastapi.responses import FileResponse
 import os
 from typing import Annotated
 import random
@@ -92,65 +92,6 @@ async def change_user_password(
 
 ##########################################################################################################################
 # Endpoint for ttm_service
-# @router.post("/ttm_service")
-# async def ttm_service(request: TTSMrequest, user: User = Depends(get_current_active_user)):
-#     user_dict = jsonable_encoder(user)
-#     print("User details:", user_dict)
-
-#     #check if the user has subscription or not
-#     if user.roles:
-#         role = user.roles[0]
-#         if user.subscription_end_time and datetime.utcnow() <= user.subscription_end_time and role.ttm_enabled == 1:
-#             print("Congratulations! You have access to Text-to-Music (TTM) service.")
-
-#             bt.logging.info("__________request prompt____________: ", request.prompt)
-#             bt.logging.info("__________request duration____________: ", request.duration)
-
-#             # Get filtered axons
-#             filtered_axons = ttm_api.get_filtered_axons()
-#             bt.logging.info(f"Filtered axons: {filtered_axons}")
-
-#             # Check if there are axons available
-#             if not filtered_axons:
-#                 bt.logging.error("No axons available for Text-to-Music.")
-#                 raise HTTPException(status_code=404, detail="No axons available for Text-to-Music.")
-
-#             # Choose a TTM axon randomly
-#             uid, axon = random.choice(filtered_axons)
-#             bt.logging.info(f"Chosen axon: {axon}, UID: {uid}")
-#             response = ttm_api.query_network(axon, request.prompt, duration=request.duration)
-
-#             # Process the response
-#             audio_data = ttm_api.process_response(axon, response, request.prompt, api=True)
-#             bt.logging.info(f"Audio data: {audio_data}")
-
-#             try:
-#                 file_extension = os.path.splitext(audio_data)[1].lower()
-#                 bt.logging.info(f"audio_file_path: {audio_data}")
-#             except Exception as e:
-#                 print(e)
-#                 bt.logging.error(f"Error processing audio file path or server unaviable for uid: {uid}")
-#                 raise HTTPException(status_code=404, detail= f"Error processing audio file path or server unavailable for uid: {uid}")
-#             # Process each audio file path as needed
-
-#             if file_extension not in ['.wav', '.mp3']:
-#                 bt.logging.error(f"Unsupported audio format for uid: {uid}")
-#                 raise HTTPException(status_code=405, detail="Unsupported audio format.")
-
-#             # Set the appropriate content type based on the file extension
-#             content_type = "audio/wav" if file_extension == '.wav' else "audio/mpeg"
-
-#             # Return the audio file
-#             return FileResponse(path=audio_data, media_type=content_type, filename=os.path.basename(audio_data), headers={"TTM-Axon-UID": str(uid)})
-
-#         else:
-#             print(f"{user.username}! You do not have any access to Text-to-Music (TTM) service or subscription is expired.")
-#             raise HTTPException(status_code=401, detail=f"{user.username}! Your subscription have been expired or you does not have any access to Text-to-Music (TTM) service")
-#     else:
-#         print(f"{user.username}! You do not have any roles assigned.")
-#         raise HTTPException(status_code=401, detail=f"{user.username}! Your does not have any roles assigned")
-
-
 @router.post("/ttm_service")
 async def ttm_service(request: TTSMrequest, user: User = Depends(get_current_active_user)):
     user_dict = jsonable_encoder(user)
@@ -200,7 +141,7 @@ async def ttm_service(request: TTSMrequest, user: User = Depends(get_current_act
             content_type = "audio/wav" if file_extension == '.wav' else "audio/mpeg"
 
             # Return the audio file
-            return StreamingResponse(path=audio_data, media_type=content_type, filename=os.path.basename(audio_data), headers={"TTM-Axon-UID": str(uid)})
+            return FileResponse(path=audio_data, media_type=content_type, filename=os.path.basename(audio_data), headers={"TTM-Axon-UID": str(uid)})
 
         else:
             print(f"{user.username}! You do not have any access to Text-to-Music (TTM) service or subscription is expired.")
