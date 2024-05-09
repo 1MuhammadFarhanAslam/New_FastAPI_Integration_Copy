@@ -78,7 +78,7 @@ def create_app(secret_key: str):
         print("Oops! You have exceeded the rate limit: 1 request / 5 minutes. Please try again later.")
         return JSONResponse(
             status_code=429,
-            detail={"Oops! You have exceeded the rate limit: 1 request / 5 minutes. Please try again later."})
+            content={"Oops! You have exceeded the rate limit: 1 request / 5 minutes. Please try again later."})
 
     # Allow CORS for all origins specified in the list
     app.add_middleware(
