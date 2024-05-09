@@ -2,7 +2,7 @@
 import os
 import sys
 from getpass import getpass  # Use getpass to hide the password input
-from fastapi import FastAPI, Request, HTTPException, JSONResponse
+from fastapi import FastAPI, Request, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from slowapi.errors import RateLimitExceeded
 from fastapi.responses import JSONResponse
