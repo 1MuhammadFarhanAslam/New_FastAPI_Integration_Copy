@@ -108,10 +108,13 @@ async def ttm_service(request: Request, user: User = Depends(get_current_active_
             if user.subscription_end_time and datetime.utcnow() <= user.subscription_end_time and role.ttm_enabled == 1:
                 print("Congratulations! You have access to Text-to-Music (TTM) service.")
 
-                prompt = request.get("prompt")
+                request_data = await request.json()
+                print('_______________request_data_____________', request_data)
+
+                prompt = request_data.get("prompt")
                 print('_______________prompt_____________', prompt)
 
-                duration = request.get("duration")
+                duration = request_data.get("duration")
                 print('_______________duration_____________', duration)
 
                 bt.logging.info("__________request prompt____________: ", prompt)
