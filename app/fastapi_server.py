@@ -6,6 +6,7 @@ from fastapi import FastAPI, Request, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from slowapi.errors import RateLimitExceeded
 from fastapi.responses import JSONResponse
+import json
 
 # Define the function to create the FastAPI application
 def create_app(secret_key: str):
@@ -63,6 +64,7 @@ def create_app(secret_key: str):
     ]
 
     # Register the global exception handler for RateLimitExceeded
+
     @app.exception_handler(RateLimitExceeded)
     async def rate_limit_exception_handler(request: Request, exc: RateLimitExceeded):
         """
@@ -76,9 +78,12 @@ def create_app(secret_key: str):
             JSONResponse: JSON response with status code 429 (Too Many Requests) and a custom error message.
         """
         print("Oops! You have exceeded the rate limit: 1 request / 5 minutes. Please try again later.")
+        error_message = {"error": "Oops! You have exceeded the rate limit: 1 request / 5 minutes. Please try again later."}
         return JSONResponse(
             status_code=429,
-            content={"Oops! You have exceeded the rate limit: 1 request / 5 minutes. Please try again later."})
+            content=json.loads(json.dumps(error_message))
+    )
+
 
     # Allow CORS for all origins specified in the list
     app.add_middleware(

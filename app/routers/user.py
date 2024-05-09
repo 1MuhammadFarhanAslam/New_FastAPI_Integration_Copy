@@ -27,11 +27,6 @@ router = APIRouter()
 ttm_api = TTM_API()
 
 
-class TooManyRequests(HTTPException):
-    def __init__(self):
-        super().__init__(status_code=429, detail="Oops! You have exceeded the rate limit: 1 request / 5 minutes. Please try again later.")
-
-
 
 # Define a Pydantic model for the request body
 # class TTSMrequest(BaseModel):
