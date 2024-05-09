@@ -76,7 +76,7 @@ def create_app(secret_key: str):
             JSONResponse: JSON response with status code 429 (Too Many Requests) and a custom error message.
         """
         print("Oops! You have exceeded the rate limit: 1 request / 5 minutes. Please try again later.")
-        return HTTPException(
+        return JSONResponse(
             status_code=429,
             detail={"Oops! You have exceeded the rate limit: 1 request / 5 minutes. Please try again later."})
 
