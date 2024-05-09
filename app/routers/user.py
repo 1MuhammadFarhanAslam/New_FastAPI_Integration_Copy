@@ -1,6 +1,6 @@
 # user.py
 import torchaudio
-from fastapi import APIRouter, Depends, HTTPException, Form
+from fastapi import APIRouter, Depends, HTTPException, Form, Request
 from ..user_database import get_user, verify_user_credentials, update_user_password, get_database
 from pydantic import BaseModel
 import logging
@@ -97,7 +97,7 @@ async def change_user_password(
 # Endpoint for ttm_service
 @router.post("/ttm_service")
 @limiter.limit("1/5 minutes")  # Limit to one request per minute per user
-async def ttm_service(request: TTSMrequest, user: User = Depends(get_current_active_user)):
+async def ttm_service(request: TTSMrequest, Rate_limit: Request, user: User = Depends(get_current_active_user)):
     try:
         user_dict = jsonable_encoder(user)
         print("User details:", user_dict)
