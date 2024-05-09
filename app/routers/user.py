@@ -169,4 +169,6 @@ async def ttm_service(request: Request, user: User = Depends(get_current_active_
     except RateLimitExceeded as e:
         # Handle the RateLimitExceeded exception
         print(f"Rate limit exceeded: {e}")
-        raise TooManyRequests()
+        raise HTTPException(
+            status_code=429,
+            detail="Oops! You have exceeded the rate limit: 1 request / 5 minutes. Please try again later.")
