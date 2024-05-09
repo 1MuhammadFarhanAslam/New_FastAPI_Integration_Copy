@@ -108,8 +108,14 @@ async def ttm_service(request: Request, user: User = Depends(get_current_active_
             if user.subscription_end_time and datetime.utcnow() <= user.subscription_end_time and role.ttm_enabled == 1:
                 print("Congratulations! You have access to Text-to-Music (TTM) service.")
 
-                bt.logging.info("__________request prompt____________: ", request.prompt)
-                bt.logging.info("__________request duration____________: ", request.duration)
+                prompt = request.get("prompt")
+                print('_______________prompt_____________', prompt)
+
+                duration = request.get("duration")
+                print('_______________duration_____________', duration)
+
+                bt.logging.info("__________request prompt____________: ", prompt)
+                bt.logging.info("__________request duration____________: ", duration)
 
                 # Get filtered axons
                 filtered_axons = ttm_api.get_filtered_axons()
@@ -123,10 +129,10 @@ async def ttm_service(request: Request, user: User = Depends(get_current_active_
                 # Choose a TTM axon randomly
                 uid, axon = random.choice(filtered_axons)
                 bt.logging.info(f"Chosen axon: {axon}, UID: {uid}")
-                response = ttm_api.query_network(axon, request.prompt, duration=request.duration)
+                response = ttm_api.query_network(axon, prompt, duration=duration)
 
                 # Process the response
-                audio_data = ttm_api.process_response(axon, response, request.prompt, api=True)
+                audio_data = ttm_api.process_response(axon, response, prompt, api=True)
                 bt.logging.info(f"Audio data: {audio_data}")
 
                 try:
