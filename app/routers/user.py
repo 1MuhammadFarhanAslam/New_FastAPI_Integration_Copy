@@ -112,10 +112,7 @@ async def ttm_service(request: Request, user: User = Depends(get_current_active_
                 print('_______________request_data_____________', request_data)
 
                 prompt = request_data.get("prompt")
-                print('_______________prompt_____________', prompt)
-
                 duration = request_data.get("duration")
-                print('_______________duration_____________', duration)
 
                 bt.logging.info("__________request prompt____________: ", prompt)
                 bt.logging.info("__________request duration____________: ", duration)
