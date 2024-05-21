@@ -97,7 +97,8 @@ async def change_user_password(
 # Endpoint for ttm_service
 @router.post("/ttm_service")
 # @limiter.limit("1/5 minutes")  # Limit to one request per minute per user
-async def ttm_service(request: Request, ttm_request: TTSMrequest, user: User = Depends(get_current_active_user)):
+# async def ttm_service(request: Request, ttm_request: TTSMrequest, user: User = Depends(get_current_active_user)):
+async def ttm_service(ttm_request: TTSMrequest, user: User = Depends(get_current_active_user)):
     try:
         user_dict = jsonable_encoder(user)
         print("User details:", user_dict)
@@ -107,14 +108,9 @@ async def ttm_service(request: Request, ttm_request: TTSMrequest, user: User = D
             role = user.roles[0]
             if user.subscription_end_time and datetime.utcnow() <= user.subscription_end_time and role.ttm_enabled == 1:
                 print("Congratulations! You have access to Text-to-Music (TTM) service.")
+                
                 # Check if the user has access to the Text-to-Music service
-                if request:
-                    request_data = await request.json()
-                    print('_______________request_data_____________', request_data)
-
-                    prompt = request_data.get("prompt")
-                    duration = request_data.get("duration")
-                else:
+                if role.ttm_enabled == 1:
                     prompt = ttm_request.prompt
                     duration = ttm_request.duration
 
