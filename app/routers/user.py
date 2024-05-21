@@ -107,7 +107,7 @@ async def ttm_service(request: Request, ttm_request: TTSMrequest, user: User = D
             role = user.roles[0]
             if user.subscription_end_time and datetime.utcnow() <= user.subscription_end_time and role.ttm_enabled == 1:
                 print("Congratulations! You have access to Text-to-Music (TTM) service.")
-            try:
+                # Check if the user has access to the Text-to-Music service
                 if request:
                     request_data = await request.json()
                     print('_______________request_data_____________', request_data)
@@ -157,12 +157,6 @@ async def ttm_service(request: Request, ttm_request: TTSMrequest, user: User = D
 
                     # Return the audio file
                     return FileResponse(path=audio_data, media_type=content_type, filename=os.path.basename(audio_data), headers={"TTM-Axon-UID": str(uid)})
-            
-            except Exception as e:
-                # Log the error for debugging
-                logging.error(f"Error during Text-to-Music service: {e}")
-                # Return a generic error response
-                raise HTTPException(status_code=500, detail="Internal Server Error. Check the server logs for more details.")
 
             else:
                 print(f"{user.username}! You do not have any access to Text-to-Music (TTM) service or subscription is expired.")
