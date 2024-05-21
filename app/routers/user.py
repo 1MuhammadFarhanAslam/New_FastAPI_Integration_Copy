@@ -107,55 +107,62 @@ async def ttm_service(request: Request, ttm_request: TTSMrequest, user: User = D
             role = user.roles[0]
             if user.subscription_end_time and datetime.utcnow() <= user.subscription_end_time and role.ttm_enabled == 1:
                 print("Congratulations! You have access to Text-to-Music (TTM) service.")
-            if request:
-                request_data = await request.json()
-                print('_______________request_data_____________', request_data)
+            try:
+                if request:
+                    request_data = await request.json()
+                    print('_______________request_data_____________', request_data)
 
-                prompt = request_data.get("prompt")
-                duration = request_data.get("duration")
-            else:
-                prompt = ttm_request.prompt
-                duration = ttm_request.duration
+                    prompt = request_data.get("prompt")
+                    duration = request_data.get("duration")
+                else:
+                    prompt = ttm_request.prompt
+                    duration = ttm_request.duration
 
-                bt.logging.info("__________request prompt____________: ", prompt)
-                bt.logging.info("__________request duration____________: ", duration)
+                    bt.logging.info("__________request prompt____________: ", prompt)
+                    bt.logging.info("__________request duration____________: ", duration)
 
-                # Get filtered axons
-                filtered_axons = ttm_api.get_filtered_axons()
-                bt.logging.info(f"Filtered axons: {filtered_axons}")
+                    # Get filtered axons
+                    filtered_axons = ttm_api.get_filtered_axons()
+                    bt.logging.info(f"Filtered axons: {filtered_axons}")
 
-                # Check if there are axons available
-                if not filtered_axons:
-                    bt.logging.error("No axons available for Text-to-Music.")
-                    raise HTTPException(status_code=404, detail="No axons available for Text-to-Music.")
+                    # Check if there are axons available
+                    if not filtered_axons:
+                        bt.logging.error("No axons available for Text-to-Music.")
+                        raise HTTPException(status_code=404, detail="No axons available for Text-to-Music.")
 
-                # Choose a TTM axon randomly
-                uid, axon = random.choice(filtered_axons)
-                bt.logging.info(f"Chosen axon: {axon}, UID: {uid}")
-                response = ttm_api.query_network(axon, prompt, duration=duration)
+                    # Choose a TTM axon randomly
+                    uid, axon = random.choice(filtered_axons)
+                    bt.logging.info(f"Chosen axon: {axon}, UID: {uid}")
+                    response = ttm_api.query_network(axon, prompt, duration=duration)
 
-                # Process the response
-                audio_data = ttm_api.process_response(axon, response, prompt, api=True)
-                bt.logging.info(f"Audio data: {audio_data}")
+                    # Process the response
+                    audio_data = ttm_api.process_response(axon, response, prompt, api=True)
+                    bt.logging.info(f"Audio data: {audio_data}")
 
-                try:
-                    file_extension = os.path.splitext(audio_data)[1].lower()
-                    bt.logging.info(f"audio_file_path: {audio_data}")
-                except Exception as e:
-                    print(e)
-                    bt.logging.error(f"Error processing audio file path or server unaviable for uid: {uid}")
-                    raise HTTPException(status_code=404, detail= f"Error processing audio file path or server unavailable for uid: {uid}")
-                # Process each audio file path as needed
+                    try:
+                        file_extension = os.path.splitext(audio_data)[1].lower()
+                        bt.logging.info(f"audio_file_path: {audio_data}")
+                    except Exception as e:
+                        print(e)
+                        bt.logging.error(f"Error processing audio file path or server unaviable for uid: {uid}")
+                        raise HTTPException(status_code=404, detail= f"Error processing audio file path or server unavailable for uid: {uid}")
+                    # Process each audio file path as needed
 
-                if file_extension not in ['.wav', '.mp3']:
-                    bt.logging.error(f"Unsupported audio format for uid: {uid}")
-                    raise HTTPException(status_code=405, detail="Unsupported audio format.")
+                    if file_extension not in ['.wav', '.mp3']:
+                        bt.logging.error(f"Unsupported audio format for uid: {uid}")
+                        raise HTTPException(status_code=405, detail="Unsupported audio format.")
 
-                # Set the appropriate content type based on the file extension
-                content_type = "audio/wav" if file_extension == '.wav' else "audio/mpeg"
+                    # Set the appropriate content type based on the file extension
+                    content_type = "audio/wav" if file_extension == '.wav' else "audio/mpeg"
 
-                # Return the audio file
-                return FileResponse(path=audio_data, media_type=content_type, filename=os.path.basename(audio_data), headers={"TTM-Axon-UID": str(uid)})
+                    # Return the audio file
+                    return FileResponse(path=audio_data, media_type=content_type, filename=os.path.basename(audio_data), headers={"TTM-Axon-UID": str(uid)})
+            
+            except Exception as e:
+                # Log the error for debugging
+                logging.error(f"Error during Text-to-Music service: {e}")
+                # Return a generic error response
+                raise HTTPException(status_code=500, detail="Internal Server Error. Check the server logs for more details.")
 
             else:
                 print(f"{user.username}! You do not have any access to Text-to-Music (TTM) service or subscription is expired.")
