@@ -29,9 +29,9 @@ ttm_api = TTM_API()
 
 
 # Define a Pydantic model for the request body
-class TTSMrequest(BaseModel):
-    prompt: str # The prompt for the Text-to-Music service
-    duration: int # The duration of the audio in seconds
+# class TTSMrequest(BaseModel):
+#     prompt: str # The prompt for the Text-to-Music service
+#     duration: int # The duration of the audio in seconds
 
 @router.post("/change_password", response_model=dict)
 async def change_user_password(
@@ -97,8 +97,7 @@ async def change_user_password(
 # Endpoint for ttm_service
 @router.post("/ttm_service")
 # @limiter.limit("1/5 minutes")  # Limit to one request per minute per user
-async def ttm_service(ttm_request: TTSMrequest, user: User = Depends(get_current_active_user)):
-# async def ttm_service(ttm_request: TTSMrequest, user: User = Depends(get_current_active_user)):
+async def ttm_service(request: Request, user: User = Depends(get_current_active_user)):
     try:
         user_dict = jsonable_encoder(user)
         print("User details:", user_dict)
@@ -109,50 +108,51 @@ async def ttm_service(ttm_request: TTSMrequest, user: User = Depends(get_current
             if user.subscription_end_time and datetime.utcnow() <= user.subscription_end_time and role.ttm_enabled == 1:
                 print("Congratulations! You have access to Text-to-Music (TTM) service.")
 
-                # Check if the user has access to the Text-to-Music service
-                if ttm_request:
-                    prompt = ttm_request.prompt
-                    duration = ttm_request.duration
+                request_data = await request.json()
+                print('_______________request_data_____________', request_data)
 
-                    bt.logging.info("__________request prompt____________: ", prompt)
-                    bt.logging.info("__________request duration____________: ", duration)
+                prompt = request_data.get("prompt")
+                duration = request_data.get("duration")
 
-                    # Get filtered axons
-                    filtered_axons = ttm_api.get_filtered_axons()
-                    bt.logging.info(f"Filtered axons: {filtered_axons}")
+                bt.logging.info("__________request prompt____________: ", prompt)
+                bt.logging.info("__________request duration____________: ", duration)
 
-                    # Check if there are axons available
-                    if not filtered_axons:
-                        bt.logging.error("No axons available for Text-to-Music.")
-                        raise HTTPException(status_code=404, detail="No axons available for Text-to-Music.")
+                # Get filtered axons
+                filtered_axons = ttm_api.get_filtered_axons()
+                bt.logging.info(f"Filtered axons: {filtered_axons}")
 
-                    # Choose a TTM axon randomly
-                    uid, axon = random.choice(filtered_axons)
-                    bt.logging.info(f"Chosen axon: {axon}, UID: {uid}")
-                    response = ttm_api.query_network(axon, prompt, duration=duration)
+                # Check if there are axons available
+                if not filtered_axons:
+                    bt.logging.error("No axons available for Text-to-Music.")
+                    raise HTTPException(status_code=404, detail="No axons available for Text-to-Music.")
 
-                    # Process the response
-                    audio_data = ttm_api.process_response(axon, response, prompt, api=True)
-                    bt.logging.info(f"Audio data: {audio_data}")
+                # Choose a TTM axon randomly
+                uid, axon = random.choice(filtered_axons)
+                bt.logging.info(f"Chosen axon: {axon}, UID: {uid}")
+                response = ttm_api.query_network(axon, prompt, duration=duration)
 
-                    try:
-                        file_extension = os.path.splitext(audio_data)[1].lower()
-                        bt.logging.info(f"audio_file_path: {audio_data}")
-                    except Exception as e:
-                        print(e)
-                        bt.logging.error(f"Error processing audio file path or server unaviable for uid: {uid}")
-                        raise HTTPException(status_code=404, detail= f"Error processing audio file path or server unavailable for uid: {uid}")
-                    # Process each audio file path as needed
+                # Process the response
+                audio_data = ttm_api.process_response(axon, response, prompt, api=True)
+                bt.logging.info(f"Audio data: {audio_data}")
 
-                    if file_extension not in ['.wav', '.mp3']:
-                        bt.logging.error(f"Unsupported audio format for uid: {uid}")
-                        raise HTTPException(status_code=405, detail="Unsupported audio format.")
+                try:
+                    file_extension = os.path.splitext(audio_data)[1].lower()
+                    bt.logging.info(f"audio_file_path: {audio_data}")
+                except Exception as e:
+                    print(e)
+                    bt.logging.error(f"Error processing audio file path or server unaviable for uid: {uid}")
+                    raise HTTPException(status_code=404, detail= f"Error processing audio file path or server unavailable for uid: {uid}")
+                # Process each audio file path as needed
 
-                    # Set the appropriate content type based on the file extension
-                    content_type = "audio/wav" if file_extension == '.wav' else "audio/mpeg"
+                if file_extension not in ['.wav', '.mp3']:
+                    bt.logging.error(f"Unsupported audio format for uid: {uid}")
+                    raise HTTPException(status_code=405, detail="Unsupported audio format.")
 
-                    # Return the audio file
-                    return FileResponse(path=audio_data, media_type=content_type, filename=os.path.basename(audio_data), headers={"TTM-Axon-UID": str(uid)})
+                # Set the appropriate content type based on the file extension
+                content_type = "audio/wav" if file_extension == '.wav' else "audio/mpeg"
+
+                # Return the audio file
+                return FileResponse(path=audio_data, media_type=content_type, filename=os.path.basename(audio_data), headers={"TTM-Axon-UID": str(uid)})
 
             else:
                 print(f"{user.username}! You do not have any access to Text-to-Music (TTM) service or subscription is expired.")
