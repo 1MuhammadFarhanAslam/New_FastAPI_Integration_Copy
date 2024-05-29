@@ -86,7 +86,8 @@ def create_app(secret_key: str):
         allow_origins=origins,
         allow_credentials=True,
         allow_methods=["GET", "POST", "PUT", "DELETE"],
-        allow_headers=["*"],
+        allow_headers=["DNT", "User-Agent", "X-Requested-With", "If-Modified-Since", "Cache-Control", "Content-Type", "Range", "Authorization", "On-behalf-of", "x-sg-elas-acl" ],
+        expose_headers=["*"],
     )
 
     # Include routers
