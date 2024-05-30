@@ -96,7 +96,7 @@ async def change_user_password(
 ##########################################################################################################################
 # Endpoint for ttm_service
 @router.post("/ttm_service")
-# @limiter.limit("1/5 minutes")  # Limit to one request per minute per user
+@limiter.limit("1/5 minutes")  # Limit to one request per minute per user
 async def ttm_service(request: Request, user: User = Depends(get_current_active_user)):
     try:
         user_dict = jsonable_encoder(user)
