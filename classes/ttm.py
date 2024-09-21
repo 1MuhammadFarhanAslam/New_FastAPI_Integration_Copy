@@ -308,8 +308,8 @@ class MusicGenerationService(AIModelService):
 
         # Update self.filtered_axon with the filtered uids
         self.filtered_axon = filtered_uids
-        
-        print(f"Queryable UIDs________________________________________: {self.filtered_uids}")
+
+        print(f"Queryable UIDs________________________________________: {self.filtered_axon}")
         
         # Generate subsets (combinations) from filtered uids
         subset_length = min(self.total_dendrites_per_query, len(filtered_uids))
