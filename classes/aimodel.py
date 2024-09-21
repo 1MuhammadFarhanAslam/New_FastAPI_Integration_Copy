@@ -43,7 +43,7 @@ class AIModelService:
         if AIModelService._scores is None:
             AIModelService._scores = self.metagraph.E.clone().detach()
         self.scores = AIModelService._scores
-        self.uid = self.metagraph.hotkeys.index(self.wallet.hotkey.ss58_address)
+        # self.uid = self.metagraph.hotkeys.index(self.wallet.hotkey.ss58_address)
 
 
     def get_config(self):
