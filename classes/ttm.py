@@ -301,7 +301,6 @@ class MusicGenerationService(AIModelService):
 
         # Combine with the previous conditions
         queryable_uids = queryable_uids & not_blacklisted
-        print(f"Queryable UIDs________________________________________: {queryable_uids}")
 
         # Filter the uids based on the final boolean mask
         filtered_indices = queryable_uids.nonzero(as_tuple=True)[0]
@@ -309,6 +308,8 @@ class MusicGenerationService(AIModelService):
 
         # Update self.filtered_axon with the filtered uids
         self.filtered_axon = filtered_uids
+        
+        print(f"Queryable UIDs________________________________________: {self.filtered_uids}")
         
         # Generate subsets (combinations) from filtered uids
         subset_length = min(self.total_dendrites_per_query, len(filtered_uids))
