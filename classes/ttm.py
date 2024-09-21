@@ -266,62 +266,49 @@ class MusicGenerationService(AIModelService):
         return filtered_axons
 
 
+
     def get_filtered_axons(self):
         # Get the uids of all miners in the network.
         uids = self.metagraph.uids.tolist()
+        queryable_uids = (self.metagraph.total_stake >= 0)
+        # Remove the weights of miners that are not queryable.
+        queryable_uids = torch.Tensor(queryable_uids) * torch.Tensor([self.metagraph.neurons[uid].axon_info.ip != '0.0.0.0' for uid in uids])
+        queryable_uid = queryable_uids * torch.Tensor([
+            any(self.metagraph.neurons[uid].axon_info.ip == ip for ip in lib.BLACKLISTED_IPS) or
+            any(self.metagraph.neurons[uid].axon_info.ip.startswith(prefix) for prefix in lib.BLACKLISTED_IPS_SEG)
+            for uid in uids
+        ])
+        active_miners = torch.sum(queryable_uids)
+        dendrites_per_query = self.total_dendrites_per_query
+
+        # if there are no active miners, set active_miners to 1
+        if active_miners == 0:
+            active_miners = 1
+        # if there are less than dendrites_per_query * 3 active miners, set dendrites_per_query to active_miners / 3
+        if active_miners < self.total_dendrites_per_query * 3:
+            dendrites_per_query = int(active_miners / 3)
+        else:
+            dendrites_per_query = self.total_dendrites_per_query
         
-        # Ensure total_stake is a PyTorch tensor
-        total_stake = torch.tensor(self.metagraph.total_stake)
-        
-        # Create a boolean tensor where miners with total_stake >= 0 are True
-        queryable_uids = total_stake >= 0
-
-        # Create a boolean tensor where miners with axon_info.ip != '0.0.0.0' are True
-        ip_not_zero = torch.tensor(
-            [self.metagraph.neurons[uid].axon_info.ip != '0.0.0.0' for uid in uids]
-        )
-
-        # Combine the conditions using logical AND
-        queryable_uids = queryable_uids & ip_not_zero
-
-        # Create a boolean tensor for miners not in the blacklist
-        not_blacklisted = torch.tensor(
-            [
-                not (
-                    any(self.metagraph.neurons[uid].axon_info.ip == ip for ip in lib.BLACKLISTED_IPS)
-                    or any(
-                        self.metagraph.neurons[uid].axon_info.ip.startswith(prefix)
-                        for prefix in lib.BLACKLISTED_IPS_SEG
-                    )
-                )
-                for uid in uids
-            ]
-        )
-
-        # Combine with the previous conditions
-        queryable_uids = queryable_uids & not_blacklisted
-        print(f"Queryable UIDs +++++++++++++++++: {queryable_uids}")
-
-        # Filter the uids based on the final boolean mask
-        filtered_indices = queryable_uids.nonzero(as_tuple=True)[0]
-        print(f"Filtered Indices -----------------: {filtered_indices}")
-        filtered_uids = [uids[i] for i in filtered_indices.tolist()]
-
-        # Update self.filtered_axon with the filtered uids
-        self.filtered_axon = filtered_uids
-        
-        # Generate subsets (combinations) from filtered uids
-        subset_length = min(self.total_dendrites_per_query, len(filtered_uids))
-        
+        # less than 3 set to 3
+        if dendrites_per_query < self.minimum_dendrites_per_query:
+                dendrites_per_query = self.minimum_dendrites_per_query
+        # zip uids and queryable_uids, filter only the uids that are queryable, unzip, and get the uids
+        zipped_uids = list(zip(uids, queryable_uids))
+        zipped_uid = list(zip(uids, queryable_uid))
+        filtered_zipped_uids = list(filter(lambda x: x[1], zipped_uids))
+        filtered_uids = [item[0] for item in filtered_zipped_uids] if filtered_zipped_uids else []
+        filtered_zipped_uid = list(filter(lambda x: x[1], zipped_uid))
+        filtered_uid = [item[0] for item in filtered_zipped_uid] if filtered_zipped_uid else []
+        self.filtered_axon = filtered_uid
+        subset_length = min(dendrites_per_query, len(filtered_uids))
         # Shuffle the order of members
         random.shuffle(filtered_uids)
-        
-        # Generate subsets of length subset_length until all items are covered
+        # Generate subsets of length 7 until all items are covered
         while filtered_uids:
             subset = filtered_uids[:subset_length]
             self.combinations.append(subset)
             filtered_uids = filtered_uids[subset_length:]
-
         return self.combinations
 
     def update_weights(self, scores):
