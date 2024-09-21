@@ -33,7 +33,7 @@ anyascii==0.3.2
 jamo==0.4.1
 cn2an==0.5.22 
 pypinyin==0.50.0 
-mecab-python3#==1.0.5 
+mecab-python3 #==1.0.5 
 num2words==0.5.12 
 unidic_lite==1.0.8 
 unidic==1.1.0
