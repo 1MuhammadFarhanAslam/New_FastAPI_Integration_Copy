@@ -301,6 +301,7 @@ class MusicGenerationService(AIModelService):
 
         # Combine with the previous conditions
         queryable_uids = queryable_uids & not_blacklisted
+        print(f"Queryable UIDs________________________________________: {queryable_uids}")
 
         # Filter the uids based on the final boolean mask
         filtered_indices = queryable_uids.nonzero(as_tuple=True)[0]
