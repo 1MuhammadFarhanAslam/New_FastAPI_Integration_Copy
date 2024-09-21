@@ -112,7 +112,7 @@ class MusicGenerationService(AIModelService):
             filtered_axons,
             lib.protocol.MusicGeneration(text_input=prompt, duration=self.duration ),
             deserialize=True,
-            timeout=self.time_out,
+            timeout=20,
         )
         return responses
     
