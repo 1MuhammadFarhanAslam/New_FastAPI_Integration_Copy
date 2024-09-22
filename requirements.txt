@@ -1,6 +1,6 @@
 bittensor==7.4.0
 torchvision==0.17.0
-torchaudio==2.2.0
+torchaudio==2.1.0
 audiocraft==1.2.0
 laion-clap
 huggingface_hub==0.21.4 
@@ -9,6 +9,11 @@ encodec
 funcy==2.0
 transformers==4.37.2
 audiolm-pytorch==2.0.7
+
+
+# audiocraft 1.2.0 depends on torch==2.1.0
+# audiolm-pytorch 2.0.7 depends on torch>=2.1
+# torchaudio 2.2.0 depends on torch==2.2.0
 
 # speechbrain==0.5.16
 datasets
