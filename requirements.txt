@@ -9,11 +9,6 @@ encodec
 funcy==2.0
 transformers==4.37.2
 audiolm-pytorch==2.0.7
-# bittensor 7.4.0 depends on numpy~=1.26
-# datasets 2.16.1 depends on numpy>=1.17
-# encodec 0.1.1 depends on numpy
-# g2p-en 2.1.0 depends on numpy>=1.13.1
-# laion-clap 1.1.4 depends on numpy==1.23.5
 
 # speechbrain==0.5.16
 datasets
