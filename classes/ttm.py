@@ -42,7 +42,7 @@ class MusicGenerationService(AIModelService):
         self.duration = None  
         self.lock = asyncio.Lock()
         self.best_uid = self.priority_uids(self.metagraph)
-        self.time_out = 15
+        self.time_out = 80
         
 
     def load_prompts(self):
