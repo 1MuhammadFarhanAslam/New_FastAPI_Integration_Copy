@@ -62,7 +62,7 @@ matplotlib==3.8.2
 uvicorn==0.22.0 
 pyngrok==7.1.2
 wandb==0.16.2
-pydantic==1.10.12
+pydantic
 SQLAlchemy==1.4.51
 passlib==1.7.4 
 psycopg2-binary==2.9.9
