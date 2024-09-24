@@ -9,13 +9,13 @@ import torch
 import random
 import torchaudio
 # Import your module
+print("Imported all the required libraries")
 import lib.ttm_score
 import lib.protocol
 import lib
 import traceback
 import pandas as pd
 import sys
-print("Imported all the required libraries")
 import wave
 import contextlib
 import numpy as np
