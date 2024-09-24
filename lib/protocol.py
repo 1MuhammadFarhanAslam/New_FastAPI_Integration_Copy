@@ -1,6 +1,6 @@
 from typing import List, Optional, Any
 import bittensor as bt
-from pydantic import Field
+from pydantic import BaseModel, Field
 
 class MusicGeneration(bt.Synapse):
     """
@@ -27,7 +27,7 @@ class MusicGeneration(bt.Synapse):
         description="The machine learning model employed for music generation. Supported models: 'facebook/musicgen-medium', 'facebook/musicgen-large'."
     )
     
-    music_output: Optional[List[Any]] = Field(
+    music_output: List[Any] = Field(
         default_factory=list,  # Initialize an empty list by default
         title="Music Output",
         description="The resultant music data, encoded as a list, generated from the text input."
@@ -39,7 +39,7 @@ class MusicGeneration(bt.Synapse):
         description="The length of the generated music piece, specified in seconds."
     )
 
-    def deserialize(self) -> Optional[List[Any]]:
+    def deserialize(self) -> List[Any]:
         """
         Processes and returns the music_output into a format ready for audio rendering or further analysis.
         Returns the music_output list.
