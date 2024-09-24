@@ -15,11 +15,11 @@ import lib
 import traceback
 import pandas as pd
 import sys
+print("Imported all the required libraries")
 import wave
 import contextlib
 import numpy as np
 import wandb
-print("Imported all the required libraries")
 # Set the project root path
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 # Set the 'AudioSubnet' directory path
