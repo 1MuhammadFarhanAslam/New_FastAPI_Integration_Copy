@@ -14,7 +14,7 @@ class MusicGeneration(bt.Synapse):
         and reliability of data for MusicGeneration instances.
         """
         validate_assignment = True
-        # protected_namespaces = ()
+        protected_namespaces = ()
 
     text_input: Optional[str] = Field(
         default=None,
