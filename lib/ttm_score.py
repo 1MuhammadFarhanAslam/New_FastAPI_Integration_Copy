@@ -4,7 +4,7 @@ import librosa
 import torch
 import torchaudio
 print("torchaudio000000000000000")
-from audiocraft.metrics import CLAPTextConsistencyMetric
+import audiocraft.metrics.CLAPTextConsistencyMetric
 print("audiocraft000000000000000")
 import bittensor as bt
 
