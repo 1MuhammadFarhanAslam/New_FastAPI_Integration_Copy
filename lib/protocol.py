@@ -1,7 +1,6 @@
 from typing import List, Optional, Any
 import bittensor as bt
-from pydantic import BaseModel, Field, constr
-
+from pydantic import BaseModel, Field
 
 class MusicGeneration(bt.Synapse):
     """
@@ -15,15 +14,14 @@ class MusicGeneration(bt.Synapse):
         and reliability of data for MusicGeneration instances.
         """
         validate_assignment = True
-        protected_namespaces = ()
 
-    text_input: Optional[constr(min_length=1, max_length=500)] = Field(
+    text_input: Optional[str] = Field(
         default=None,
         title="Text Input",
         description="Textual directives or descriptions intended to guide the music generation process."
     )
     
-    model_name: Optional[constr(min_length=3, max_length=100)] = Field(
+    model_name: Optional[str] = Field(
         default=None,
         title="Model Name",
         description="The machine learning model employed for music generation. Supported models: 'facebook/musicgen-medium', 'facebook/musicgen-large'."
