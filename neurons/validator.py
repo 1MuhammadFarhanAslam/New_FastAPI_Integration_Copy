@@ -132,12 +132,15 @@ print(audio_subnet_path)
 
 # Add the project root and 'AudioSubnet' directories to sys.path
 sys.path.insert(0, project_root)
+print(sys.path)
 sys.path.insert(0, audio_subnet_path)
+print(sys.path)
 
 from lib.globals import service_flags
 from classes.ttm import MusicGenerationService
 from classes.aimodel import AIModelService
 
+print(service_flags)
 
 class AIModelController():
     def __init__(self):
