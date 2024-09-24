@@ -3,7 +3,7 @@ import numpy as np
 import librosa
 import torch
 import torchaudio
-from audiocraft.metrics import CLAPTextConsistencyMetric
+# from audiocraft.metrics import CLAPTextConsistencyMetric
 print("torchaudio000000000000000")
 import bittensor as bt
 
