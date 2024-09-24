@@ -47,6 +47,8 @@ class AIModelService:
 
 
     def get_config(self):
+
+        print("Getting config .......................")
         parser = argparse.ArgumentParser()
 
         parser.add_argument("--alpha", default=0.75, type=float, help="The weight moving average scoring.")
