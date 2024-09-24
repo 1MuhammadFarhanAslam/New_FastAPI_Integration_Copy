@@ -133,9 +133,11 @@ sys.path.insert(0, project_root)
 sys.path.insert(0, audio_subnet_path)
 
 from lib.globals import service_flags
+print("globals")
 from classes.ttm import MusicGenerationService
+print("ttmmmmmmmmmmmmmmmmmm")
 from classes.aimodel import AIModelService
-
+print("aimodellllllllllllll")
 
 class AIModelController():
     def __init__(self):
@@ -200,11 +202,8 @@ async def setup_and_run(controller):
 
 
 async def main():
-    print("main////////////////////////////////////")
     controller = AIModelController()
-    print("controllerrrrrrrrrrrrrrrr")
     await setup_and_run(controller)
-    print("setup_and_run")
 
 if __name__ == "__main__":
     asyncio.run(main())
