@@ -140,7 +140,7 @@ from lib.globals import service_flags
 from classes.ttm import MusicGenerationService
 from classes.aimodel import AIModelService
 
-print(service_flags)
+print("service_flags")
 
 class AIModelController():
     def __init__(self):
