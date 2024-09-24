@@ -13,6 +13,8 @@ from lib import __spec_version__ as spec_version
 from classes.corcel_prompt import CorcelAPI
 from lib.globals import service_flags
 
+print("aimodel.py")
+
 class AIModelService:
     _scores = None
     _base_initialized = False  # New class-level flag
