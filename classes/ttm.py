@@ -19,6 +19,7 @@ import wave
 import contextlib
 import numpy as np
 import wandb
+print("Imported all the required libraries")
 # Set the project root path
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 # Set the 'AudioSubnet' directory path
@@ -27,7 +28,6 @@ audio_subnet_path = os.path.abspath(project_root)
 sys.path.insert(0, project_root)
 sys.path.insert(0, audio_subnet_path)
 
-print("Imported all the required libraries")
 
 class MusicGenerationService(AIModelService):
     def __init__(self):
