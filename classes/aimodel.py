@@ -50,7 +50,6 @@ class AIModelService:
         parser = argparse.ArgumentParser()
 
         parser.add_argument("--alpha", default=0.75, type=float, help="The weight moving average scoring.")
-        parser.add_argument("--custom", default="my_custom_value", help="Adds a custom value to the parser.")
         parser.add_argument("--netuid", type=int, default=16, help="The chain subnet uid.")
         parser.add_argument("--vcdnp", type=int, default=10, help="Number of miners to query for each forward call.")
 
