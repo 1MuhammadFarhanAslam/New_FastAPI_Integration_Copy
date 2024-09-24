@@ -57,6 +57,9 @@ class AIModelService:
         bt.subtensor.add_args(parser)
         bt.logging.add_args(parser)
         bt.wallet.add_args(parser)
+        
+        # Print available arguments for debugging
+        parser.print_help()
 
         # Parse and return the config
         config = bt.config(parser)
