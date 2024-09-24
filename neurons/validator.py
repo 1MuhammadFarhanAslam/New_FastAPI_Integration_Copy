@@ -141,6 +141,7 @@ from classes.aimodel import AIModelService
 
 class AIModelController():
     def __init__(self):
+        print("AIModelController __init__")
         self.aimodel = AIModelService()
         self.music_generation_service = MusicGenerationService()
         self.current_service = self.music_generation_service
