@@ -60,6 +60,10 @@ class AIModelService:
         
         # Print available arguments for debugging
         parser.print_help()
+        
+        bt.wallet.add_args(parser)
+        print(parser.parse_known_args())  # Check what arguments are being added
+
 
         # Parse and return the config
         config = bt.config(parser)
