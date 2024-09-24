@@ -50,7 +50,6 @@ class AIModelService:
 
     def get_config(self):
 
-        print("Getting config .......................")
         parser = argparse.ArgumentParser()
 
         parser.add_argument("--alpha", default=0.75, type=float, help="The weight moving average scoring.")
@@ -62,11 +61,6 @@ class AIModelService:
         bt.logging.add_args(parser)
         bt.wallet.add_args(parser)
         
-        # Print available arguments for debugging
-        parser.print_help()
-        
-        print(parser.parse_known_args())  # Check what arguments are being added
-
         # Parse and return the config
         config = bt.config(parser)
         print(config)
