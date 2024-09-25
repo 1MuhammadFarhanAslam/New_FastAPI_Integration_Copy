@@ -134,7 +134,6 @@ class MusicGenerationService(AIModelService):
 
     def process_responses(self,filtered_axons, responses, prompt):
         for axon, response in zip(filtered_axons, responses):
-            bt.logging.error(f"Response from {axon.hotkey} is")
             if response is not None and isinstance(response, lib.protocol.MusicGeneration)
                 self.process_response(axon, response, prompt)
         
