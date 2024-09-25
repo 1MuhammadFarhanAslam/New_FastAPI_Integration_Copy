@@ -44,7 +44,7 @@ class MusicGenerationService(AIModelService):
         self.duration = None  
         self.lock = asyncio.Lock()
         self.best_uid = self.priority_uids(self.metagraph)
-        self.time_out = 80
+        self.time_out = 120
         
 
     def load_prompts(self):
@@ -73,7 +73,7 @@ class MusicGenerationService(AIModelService):
         except Exception as e:
             c_prompt = None
 
-        if step % 10 == 0:
+        if step % 20 == 0:
             async with self.lock:
                 # Use the API prompt if available; otherwise, load prompts from HuggingFace
                 if c_prompt:
