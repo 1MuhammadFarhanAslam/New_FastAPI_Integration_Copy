@@ -134,7 +134,7 @@ class MusicGenerationService(AIModelService):
 
     def process_responses(self,filtered_axons, responses, prompt):
         for axon, response in zip(filtered_axons, responses):
-            if response is not None and isinstance(response, lib.protocol.MusicGeneration)
+            if response is not None and isinstance(response, lib.protocol.MusicGeneration):
                 self.process_response(axon, response, prompt)
         
         bt.logging.info(f"Scores after update in TTM: {self.scores}")
