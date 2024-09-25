@@ -58,6 +58,7 @@ class MusicGenerationService(AIModelService):
             try:
                 await self.main_loop_logic(step)
                 step += 1
+                print(f"Step: {step}")
             except KeyboardInterrupt:
                 print("Keyboard interrupt detected. Exiting MusicGenerationService.")
                 break
