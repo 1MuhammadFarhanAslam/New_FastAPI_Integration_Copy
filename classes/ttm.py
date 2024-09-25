@@ -72,7 +72,7 @@ class MusicGenerationService(AIModelService):
         except Exception as e:
             c_prompt = None
 
-        if step % 100 == 0:
+        if step % 1000 == 0:
             async with self.lock:
                 # Use the API prompt if available; otherwise, load prompts from HuggingFace
                 if c_prompt:
@@ -114,7 +114,7 @@ class MusicGenerationService(AIModelService):
             filtered_axons,
             lib.protocol.MusicGeneration(text_input=prompt, duration=self.duration ),
             deserialize=True,
-            timeout=20,
+            timeout=100,
         )
         return responses
     
