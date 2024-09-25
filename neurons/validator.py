@@ -133,11 +133,8 @@ sys.path.insert(0, project_root)
 sys.path.insert(0, audio_subnet_path)
 
 from lib.globals import service_flags
-print("globals")
 from classes.ttm import MusicGenerationService
-print("ttmmmmmmmmmmmmmmmmmm")
 from classes.aimodel import AIModelService
-print("aimodellllllllllllll")
 
 class AIModelController():
     def __init__(self):
@@ -149,14 +146,12 @@ class AIModelController():
         self.last_run_start_time = dt.datetime.now()
 
     async def run_services(self):
-        print("AIModelController run_services")
         while True:
             self.check_and_update_wandb_run()
             if isinstance(self.current_service, MusicGenerationService) and self.service["MusicGenerationService"]:
                 await self.current_service.run_async()
 
     def check_and_update_wandb_run(self):
-        print("AIModelController check_and_update_wandb_run")
         # Calculate the time difference between now and the last run start time
         current_time = dt.datetime.now()
         time_diff = current_time - self.last_run_start_time
@@ -168,7 +163,6 @@ class AIModelController():
             self.new_wandb_run()  # Start a new run
 
     def new_wandb_run(self):
-        print("AIModelController new_wandb_run")
         now = dt.datetime.now()
         run_id = now.strftime("%Y-%m-%d_%H-%M-%S")
         name = f"Validator-{self.aimodel.uid}-{run_id}"
@@ -193,7 +187,6 @@ class AIModelController():
 
 
 async def setup_and_run(controller):
-    print("setup_and_run")
     # Start service-related tasks
     service_task = asyncio.create_task(controller.run_services())
     
