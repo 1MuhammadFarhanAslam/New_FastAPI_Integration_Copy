@@ -185,6 +185,7 @@ class MusicGenerationService(AIModelService):
         try:
             # Convert the list to a tensor
             speech_tensor = torch.Tensor(music_output)
+            print(f"Speech Tensor__________________________________: {speech_tensor}")
             # Normalize the speech data
             audio_data = speech_tensor / torch.max(torch.abs(speech_tensor))
 
