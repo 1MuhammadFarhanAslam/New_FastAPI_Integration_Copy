@@ -136,9 +136,7 @@ class MusicGenerationService(AIModelService):
         for axon, response in zip(filtered_axons, responses):
             bt.logging.error(f"Response from {axon.hotkey} is")
             if response is not None: # and isinstance(response, lib.protocol.MusicGeneration)
-                print(f"Response from {axon.hotkey} is: {response}")
                 self.process_response(axon, response, prompt)
-                print(f"Response from {axon.hotkey} is: {response}")
         
         bt.logging.info(f"Scores after update in TTM: {self.scores}")
 
