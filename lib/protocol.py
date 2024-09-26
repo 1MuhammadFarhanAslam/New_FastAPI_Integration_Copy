@@ -68,7 +68,7 @@ class MusicGeneration(bt.Synapse):
         title="Model Name",
         description="The machine learning model employed for music generation. Supported models: 'facebook/musicgen-medium', 'facebook/musicgen-large'."
     )
-    music_output: List = Field(
+    music_output: List[any] = Field(
         default=None,
         title="Music Output",
         description="The resultant music data, encoded as a list, generated from the text input."
