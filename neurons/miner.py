@@ -157,6 +157,7 @@ def main(config):
 
     def convert_music_to_tensor(audio_file):
         '''Convert the audio file to a tensor'''
+        print(f"Converting the audio file to a tensor: -------- ")
         try:
             # Get the file extension
             _, file_extension = os.path.splitext(audio_file)
@@ -190,6 +191,7 @@ def main(config):
                 # Assuming convert_music_to_tensor function exists to convert WAV to tensor
                 music_tensor = convert_music_to_tensor("musicgen_out.wav")
                 synapse.music_output = music_tensor
+                print(f"Music Output: ---------------------------- ")
                 return synapse
             except Exception as e:
                 bt.logging.error(f"An error occurred while processing music output: {e}")
