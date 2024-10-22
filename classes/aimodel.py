@@ -13,6 +13,8 @@ from lib import __spec_version__ as spec_version
 from classes.corcel_prompt import CorcelAPI
 from lib.globals import service_flags
 
+print("aimodel.py")
+
 class AIModelService:
     _scores = None
     _base_initialized = False  # New class-level flag
@@ -41,16 +43,16 @@ class AIModelService:
         self.p = inflect.engine()
         self.vcdnp = self.config.vcdnp
         if AIModelService._scores is None:
-            AIModelService._scores = self.metagraph.E.clone().detach()
+            AIModelService._scores = self.metagraph.E #.clone().detach()
         self.scores = AIModelService._scores
-        # self.uid = self.metagraph.hotkeys.index(self.wallet.hotkey.ss58_address)
+        self.uid = self.metagraph.hotkeys.index(self.wallet.hotkey.ss58_address)
 
 
     def get_config(self):
+
         parser = argparse.ArgumentParser()
 
         parser.add_argument("--alpha", default=0.75, type=float, help="The weight moving average scoring.")
-        parser.add_argument("--custom", default="my_custom_value", help="Adds a custom value to the parser.")
         parser.add_argument("--netuid", type=int, default=16, help="The chain subnet uid.")
         parser.add_argument("--vcdnp", type=int, default=10, help="Number of miners to query for each forward call.")
 
@@ -58,17 +60,18 @@ class AIModelService:
         bt.subtensor.add_args(parser)
         bt.logging.add_args(parser)
         bt.wallet.add_args(parser)
-
+        
         # Parse and return the config
         config = bt.config(parser)
+        print(config)
         return config
 
     def priority_uids(self, metagraph):
         hotkeys = metagraph.hotkeys  # List of hotkeys
         coldkeys = metagraph.coldkeys  # List of coldkeys
         UIDs = range(len(hotkeys))  # Assuming UID is the index of neurons
-        stakes = metagraph.S.numpy()  # Total stake
-        emissions = metagraph.E.numpy()  # Emission
+        stakes = metagraph.S #.numpy()  # Total stake
+        emissions = metagraph.E #.numpy()  # Emission
         axon = metagraph.axons
         # Create a DataFrame from the metagraph data
         df = pd.DataFrame({

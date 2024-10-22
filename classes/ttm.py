@@ -32,8 +32,8 @@ class MusicGenerationService(AIModelService):
     def __init__(self):
         super().__init__()  
         self.load_prompts()
-        self.total_dendrites_per_query = 10
-        self.minimum_dendrites_per_query = 3  # Example value, adjust as needed
+        self.total_dendrites_per_query = 100
+        self.minimum_dendrites_per_query = 33  # Example value, adjust as needed
         self.current_block = self.subtensor.block
         self.last_updated_block = self.current_block - (self.current_block % 100)
         self.last_reset_weights_block = self.current_block
@@ -42,7 +42,7 @@ class MusicGenerationService(AIModelService):
         self.duration = None  
         self.lock = asyncio.Lock()
         self.best_uid = self.priority_uids(self.metagraph)
-        self.time_out = 15
+        self.time_out = 120
         
 
     def load_prompts(self):
@@ -112,7 +112,7 @@ class MusicGenerationService(AIModelService):
             filtered_axons,
             lib.protocol.MusicGeneration(text_input=prompt, duration=self.duration ),
             deserialize=True,
-            timeout=self.time_out,
+            timeout=200,
         )
         return responses
     
@@ -183,6 +183,7 @@ class MusicGenerationService(AIModelService):
         try:
             # Convert the list to a tensor
             speech_tensor = torch.Tensor(music_output)
+            print(f"Speech Tensor: {speech_tensor[:500]}")
             # Normalize the speech data
             audio_data = speech_tensor / torch.max(torch.abs(speech_tensor))
 
@@ -255,13 +256,13 @@ class MusicGenerationService(AIModelService):
 
         if self.combinations:
             current_combination = self.combinations.pop(0)
-            bt.logging.info(f"Current Combination for TTM: {current_combination}")
-            filtered_axons = [self.metagraph.axons[i] for i in current_combination]
+            bt.logging.info(f"Current Combination for TTM: [67,68]")
+            filtered_axons = [self.metagraph.axons[i] for i in [67,68]]
         else:
             self.get_filtered_axons()
             current_combination = self.combinations.pop(0)
-            bt.logging.info(f"Current Combination for TTM: {current_combination}")
-            filtered_axons = [self.metagraph.axons[i] for i in current_combination]
+            bt.logging.info(f"Current Combination for TTM: [67,68]")
+            filtered_axons = [self.metagraph.axons[i] for i in [67,68]]
 
         return filtered_axons
 
@@ -272,7 +273,7 @@ class MusicGenerationService(AIModelService):
         uids = self.metagraph.uids.tolist()
         queryable_uids = (self.metagraph.total_stake >= 0)
         # Remove the weights of miners that are not queryable.
-        queryable_uids = queryable_uids * torch.Tensor([self.metagraph.neurons[uid].axon_info.ip != '0.0.0.0' for uid in uids])
+        queryable_uids = torch.Tensor(queryable_uids) * torch.Tensor([self.metagraph.neurons[uid].axon_info.ip != '0.0.0.0' for uid in uids])
         queryable_uid = queryable_uids * torch.Tensor([
             any(self.metagraph.neurons[uid].axon_info.ip == ip for ip in lib.BLACKLISTED_IPS) or
             any(self.metagraph.neurons[uid].axon_info.ip.startswith(prefix) for prefix in lib.BLACKLISTED_IPS_SEG)
@@ -309,7 +310,7 @@ class MusicGenerationService(AIModelService):
             subset = filtered_uids[:subset_length]
             self.combinations.append(subset)
             filtered_uids = filtered_uids[subset_length:]
-        return self.combinations
+        return filtered_uids #self.combinations
 
     def update_weights(self, scores):
         # Process scores for blacklisted miners
