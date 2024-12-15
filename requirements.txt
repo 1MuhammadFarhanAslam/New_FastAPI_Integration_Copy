@@ -95,7 +95,7 @@ bittensor #==7.3.0
 GPUtil==1.4.0
 encodec==0.1.1
 funcy==2.0
-transformers==4.37.2
+transformers==4.38.0
 audiolm-pytorch==2.0.7
 # speechbrain==0.5.16
 datasets==2.16.1
